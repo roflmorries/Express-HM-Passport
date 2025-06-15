@@ -2,6 +2,8 @@ import express, { urlencoded } from 'express';
 import session from 'express-session';
 import 'dotenv/config';
 import passport from 'passport';
+import authRouter from './routes/authRouter.js';
+import protectedRouter from './routes/protectedRouter.js'
 
 const app = express();
 
@@ -23,8 +25,8 @@ app.use(session(sessionOptions));
 app.use(passport.initialize());
 app.use(passport.session())
 
-app.use('/auth', );
-app.use('/');
+app.use('/auth', authRouter);
+app.use('/protected', protectedRouter);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
