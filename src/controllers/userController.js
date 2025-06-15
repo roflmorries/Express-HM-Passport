@@ -10,7 +10,6 @@ export const register = async (req, res) => {
   };
   const user = await createUser({ email, password });
   req.login(user, error => {
-    console.error('Login after register failed:', error); 
     if (error) return res.status(500).json({ message: 'Login failed' });
     res.json({ message: 'Registered successfully', user: { id: user.id, email: user.email } })
   })
@@ -57,7 +56,11 @@ export const resetPassword = async (req, res) => {
   const user = findUserByResetToken(req.params.token);
   if (!user) return res.status(400).json({ message: 'Invalid token' });
 
-  const password = req.body;
+  const { password } = req.body;
+  console.log(req.body)
+  if (!password || typeof password !== 'string' || !password.trim()) {
+    return res.status(400).json({ message: 'Invalid password' });
+  }
   await updatePassword(user, password);
 
   res.json({ message: 'Password has been reset' })
