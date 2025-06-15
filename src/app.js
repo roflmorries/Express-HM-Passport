@@ -4,7 +4,8 @@ import 'dotenv/config';
 import passport from 'passport';
 import './config/passport.js'
 import authRouter from './routes/authRouter.js';
-import protectedRouter from './routes/protectedRouter.js'
+import protectedRouter from './routes/protectedRouter.js';
+import helmet from 'helmet'
 
 const app = express();
 
@@ -20,6 +21,7 @@ const sessionOptions = {
 }
 
 app.use(express.json());
+app.use(helmet());
 app.use(urlencoded({ extended: false }));
 app.use(session(sessionOptions));
 
