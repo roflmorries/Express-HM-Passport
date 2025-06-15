@@ -43,13 +43,17 @@ export const forgotPassword = async (req, res) => {
   });
 
   const resetUrl = `http://localhost:3001/auth/reset/${token}`;
-  await transporter.sendMail({
+  try {
+    await transporter.sendMail({
     to: user.email,
     subject: 'Password Reset',
     text: `Follow the link to reset your password: ${resetUrl}`
   });
-
   res.json({ message: 'New password sent' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to send reset email. Try again' })
+    console.log(error)
+  }
 };
 
 export const resetPassword = async (req, res) => {
