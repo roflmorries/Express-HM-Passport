@@ -2,7 +2,6 @@ import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 
 const users = [];
-console.log(users)
 
 export const createUser = async ({email, password, googleId = null}) => {
   const passwordHash = password ? await bcrypt.hash(password, 10) : null;
@@ -15,6 +14,7 @@ export const createUser = async ({email, password, googleId = null}) => {
     resetTokenExp: null,
   }
   users.push(user);
+  console.log(users)
   return user;
 };
 
