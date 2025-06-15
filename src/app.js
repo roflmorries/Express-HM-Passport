@@ -5,20 +5,10 @@ import passport from 'passport';
 import './config/passport.js'
 import authRouter from './routes/authRouter.js';
 import protectedRouter from './routes/protectedRouter.js';
-import helmet from 'helmet'
+import helmet from 'helmet';
+import { sessionOptions } from './config/sessionOptions.js';
 
 const app = express();
-
-const sessionOptions = {
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 1000 * 60 * 60
-  }
-}
 
 app.use(express.json());
 app.use(helmet());
