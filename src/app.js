@@ -2,6 +2,7 @@ import express, { urlencoded } from 'express';
 import session from 'express-session';
 import 'dotenv/config';
 import passport from 'passport';
+import './config/passport.js'
 import authRouter from './routes/authRouter.js';
 import protectedRouter from './routes/protectedRouter.js'
 
