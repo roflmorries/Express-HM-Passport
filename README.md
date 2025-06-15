@@ -1,4 +1,4 @@
-# Express Passport Authentication Example
+# Express Passport Authentication
 
 This study project demonstrates a modern authentication system using Node.js, Express.js, and Passport.js.
 It supports local authentication (email & password), Google OAuth, session management, and password reset via email.
