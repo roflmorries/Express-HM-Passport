@@ -7,6 +7,7 @@ import authRouter from './routes/authRouter.js';
 import protectedRouter from './routes/protectedRouter.js';
 import helmet from 'helmet';
 import { sessionOptions } from './config/sessionOptions.js';
+import { connectDB } from './config/db.js';
 
 const app = express();
 
@@ -16,7 +17,9 @@ app.use(urlencoded({ extended: false }));
 app.use(session(sessionOptions));
 
 app.use(passport.initialize());
-app.use(passport.session())
+app.use(passport.session());
+
+await connectDB();
 
 app.use('/auth', authRouter);
 app.use('/protected', protectedRouter);
