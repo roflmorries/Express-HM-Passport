@@ -5,18 +5,18 @@ import nodemailer from 'nodemailer';
 
 export const register = async (req, res) => {
   const { email, password } = req.body;
-  if (findUserByEmail(email)){
+  if (await findUserByEmail(email)){
     return res.status(400).json({ message: 'User with this email already exists' });
   };
   const user = await createUser({ email, password });
   req.login(user, error => {
     if (error) return res.status(500).json({ message: 'Login failed' });
-    res.json({ message: 'Registered successfully', user: { id: user.id, email: user.email } })
+    res.json({ message: 'Registered successfully', user: { id: user._id, email: user.email } })
   })
 };
 
 export const login = (req, res) => {
-  res.json({ message: 'Logged in successfully', user: { id: req.user.id, email: req.user.email } })
+  res.json({ message: 'Logged in successfully', user: { id: req.user._id, email: req.user.email } })
 };
 
 export const logout = (req, res, next) => {
@@ -28,11 +28,11 @@ export const logout = (req, res, next) => {
 
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
-  const user = findUserByEmail(email);
+  const user = await findUserByEmail(email);
   if (!user) return res.status(400).json({ message: 'User with this email doenst exists' });
 
   const token = crypto.randomBytes(20).toString('hex');
-  setResetToken(user, token, Date.now() + 3600000);
+  await setResetToken(user, token, Date.now() + 3600000);
 
   const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -57,7 +57,7 @@ export const forgotPassword = async (req, res) => {
 };
 
 export const resetPassword = async (req, res) => {
-  const user = findUserByResetToken(req.params.token);
+  const user = await findUserByResetToken(req.params.token);
   if (!user) return res.status(400).json({ message: 'Invalid token' });
 
   const { password } = req.body;
