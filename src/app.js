@@ -19,12 +19,14 @@ app.use(session(sessionOptions));
 app.use(passport.initialize());
 app.use(passport.session());
 
-await connectDB();
 
 app.use('/auth', authRouter);
 app.use('/protected', protectedRouter);
 
 const PORT = process.env.PORT;
+
+await connectDB();
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 })
