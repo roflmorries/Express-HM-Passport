@@ -27,7 +27,7 @@ passport.use(new GoogleStrategy({
   if (!user && profile.emails && profile.emails.length > 0) {
     user = await findUserByEmail(profile.emails[0].value);
     if (user && !user.googleId) {
-      const db = await getDB();
+      const db = getDB();
       await db.collection('users').updateOne(
         { _id: user._id }, { $set: { googleId: profile.id } }
       )
