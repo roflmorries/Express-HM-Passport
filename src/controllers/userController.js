@@ -11,12 +11,12 @@ export const register = async (req, res) => {
   const user = await createUser({ email, password });
   req.login(user, error => {
     if (error) return res.status(500).json({ message: 'Login failed' });
-    res.json({ message: 'Registered successfully', user: { id: user._id, email: user.email } })
+    res.json({ message: 'Registered successfully', user: { id: user.id, email: user.email } })
   })
 };
 
 export const login = (req, res) => {
-  res.json({ message: 'Logged in successfully', user: { id: req.user._id, email: req.user.email } })
+  res.json({ message: 'Logged in successfully', user: { id: req.user.id, email: req.user.email } })
 };
 
 export const logout = (req, res, next) => {

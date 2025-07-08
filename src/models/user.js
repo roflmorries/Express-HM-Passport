@@ -1,71 +1,44 @@
 import bcrypt from 'bcrypt';
-import { getDB } from '../config/db.js';
-import { ObjectId } from 'mongodb';
+import { User } from './userModel.js';
 
 const COLLECTION = 'users';
 
-export const createUser = async ({email, password, googleId = null}) => {
+export const createUser = async ({ email, password, googleId = null }) => {
   const passwordHash = password ? await bcrypt.hash(password, 10) : null;
-  const user = {
-    email,
-    passwordHash,
-    googleId,
-    resetToken: null,
-    resetTokenExp: null,
-  }
-  const db = getDB();
-  const usersCollection = db.collection('users')
-  try {
-    const result = await usersCollection.insertOne(user);
-    user._id = result.insertedId;
-    return user
-  } catch (error) {
-    console.error(error);
-  }
+  const user = new User({ email, passwordHash, googleId });
+  await user.save();
+  return user;
 };
 
 export const findUserByEmail = async email => {
-  const db = getDB();
-  return db.collection(COLLECTION).findOne({ email })
+  return User.findOne({email});
 };
 
 export const findUserById = async id => {
-  const db = getDB();
-  try {
-    return db.collection(COLLECTION).findOne({ _id: new ObjectId(id) })
-  } catch {
-    return null
-  }
+  return User.findById(id);
 };
 
 export const findUserByGoogleId = async googleId => {
-  const db = getDB();
-  return db.collection(COLLECTION).findOne({ googleId });
+  return User.findOne({ googleId });
 };
 
 export const findUserByResetToken = async token => {
-  const db = getDB();
-  const now = Date.now();
-  return db.collection(COLLECTION).findOne({ resetToken: token, resetTokenExp: { $gt: now } });
+  return User.findOne({ resetToken: token, resetTokenExp: { $gt: Date.now() } });
 };
 
 export const setResetToken = async (user, token, exp) => {
-  const db = getDB();
-  await db.collection(COLLECTION).updateOne({ _id: user._id }, { $set: { resetToken: token, resetTokenExp: exp } })
   user.resetToken = token;
   user.resetTokenExp = exp;
+  await user.save();
 };
 
 export const validatePassword = async (user, password) => {
-  if (!user.passwordHash) return false;
-  return bcrypt.compare(password, user.passwordHash);
+  return user.validatePassword(password);
 }
 
 export const updatePassword = async (user, password) => {
-  const db = getDB();
-  const passwordHash = await bcrypt.hash(password, 10);
-  await db.collection(COLLECTION).updateOne({ _id: user._id }, {$set: { passwordHash, resetToken: null, resetTokenExp: null }});
-  user.passwordHash = passwordHash;
+  user.passwordHash = await bcrypt.hash(password, 10);
   user.resetToken = null;
   user.resetTokenExp = null;
+  return user.save();
 }

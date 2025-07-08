@@ -1,20 +1,18 @@
-import { getDB } from "../config/db.js";
+import { User } from "../models/userModel.js";
 
 export const getProtected = (req, res) => {
   res.json({
     message: 'Welcome to the protected route!',
-    user: { id: req.user._id, email: req.user.email }
-  })
-}
+    user: { id: req.user.id, email: req.user.email }
+  });
+};
 
 export const getAllUsers = async (req, res) => {
   try {
-    const db = getDB();
-    const users = await db.collection('users').find({}, { 
-      projection: { passwordHash: 0, resetToken: 0, resetTokenExp: 0 } 
-    }).toArray();
+    const users = await User.find({}, { passwordHash: 0, resetToken: 0, resetTokenExp: 0 });
     res.json({ users });
   } catch (error) {
     console.error(error);
+    res.status(500).json({ message: 'Failed to fetch users' });
   }
 };
